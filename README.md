@@ -4,6 +4,8 @@
 
 A simple computer ("Macintosh") application that takes the official Google Messages web application and transforms it into an actual application installed on your computer ("Macintosh").
 
+#### Disclaimer: Unofficial Electron-based Wrapper for Google Messages
+
 ## Project Specifications
 
 ```
@@ -34,6 +36,23 @@ mac-google-messages/
 3. Download
 4. Unzip/Mount .dmg File
 5. Install App
+
+### Project Remixing
+#### (Maybe Slightly Off Beware)
+
+How to run this project from source:
+
+1. Clone This Repository
+2. Run `npm install`
+3. Start the app with `npm start`
+
+In order to build your own version:
+
+```bash
+npm run build
+```
+
+This creates a distrubutable in the `dist` folder.
 
 ## Project Details
 
