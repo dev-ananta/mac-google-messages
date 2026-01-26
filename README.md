@@ -66,13 +66,12 @@ As far as right now I've not planned the installer function that would ask for d
  No.1 | Create Outline & Files
  No.2 | Code **index.js**
  No.3 | Code **preload.js**
- No.4 | Code **package.json**
- No.5 | Create & Code **build.yml** → Test
- No.6 | Debug Code
- No.7 | Request Feedback
- No.8 | Improve Project
- No.9 | Minor Tweaks
-No.10 | MVP Released
+ No.4 | Code **package.json** & **build.yml** → Test
+ No.5 | Debug Code
+ No.6 | Request Feedback
+ No.7 | Improve Project
+ No.8 | Minor Tweaks
+ No.9 | MVP Released
 
 ```
 
