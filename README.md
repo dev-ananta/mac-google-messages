@@ -15,6 +15,7 @@ mac-google-messages/
 │── index.js → Primary App Entry Point
 │── preload.js → Security Bridge
 │── package.json → Project Config File
+│── system-detecter.js → System Detector File
 │── /github
 │     └──  /workflows
 │            └── build.yml → GitHub Action File; Processes & Maintains Releases.
@@ -60,14 +61,18 @@ As far as right now I've not planned the installer function that would ask for d
 ### Project Roadmap
 
 ```
- No.1 | Create Outline & Files
- No.2 | Code **index.js**
- No.3 | Code **preload.js**
- No.4 | Code **package.json** & **build.yml** → Test
- No.5 | Request Feedback → Improve Project
- No.6 | Debug Code
- No.7 | MVP Released
- No.8 | Make Installer & Intel Mac/Other MacOS Model Compatibility
+  No.1 | Create Outline & Files
+  No.2 | Code **index.js**
+  No.3 | Code **preload.js**
+  No.4 | Code **package.json** & **build.yml** → Test
+  No.5 | Request Feedback → Improve Project
+  No.6 | Debug Code
+  No.7 | MVP Released
+  No.8 | Code **system-detector.js**
+  No.9 | Update **index.js** & **package.json** → Test
+ No.10 | Request Feedback → Improve Project
+ No.11 | Debug Code
+ No.12 | MDP Released
 
 ```
 
