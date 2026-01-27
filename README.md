@@ -33,12 +33,9 @@ mac-google-messages/
 
 1. Head to Releases
 2. Click on the Newest Release
-3. Download
-4. Unzip/Mount .dmg File
-5. Install App
+3. Follow the Instructions provided.
 
 ### Project Remixing
-#### (Maybe Slightly Off Beware)
 
 How to run this project from source:
 
@@ -69,8 +66,8 @@ As far as right now I've not planned the installer function that would ask for d
  No.4 | Code **package.json** & **build.yml** → Test
  No.5 | Request Feedback → Improve Project
  No.6 | Debug Code
- No.7 | Request Feedback → Minor Tweaks
- No.8 | MVP Released
+ No.7 | MVP Released
+ No.8 | Make Installer & Intel Mac/Other MacOS Model Compatibility
 
 ```
 
