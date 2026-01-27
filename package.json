@@ -23,7 +23,6 @@
 
     "dependencies": {
         "electron-store": "^8.1.0",
-        "os": "builtin",
         "axios": "^1.6.0",
         "electron-dl": "^3.5.0",
         "macaddress": "^0.5.3"
