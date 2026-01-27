@@ -19,9 +19,11 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Create tag and release
+        id: create_tag
         if: github.ref == 'refs/heads/main'
         run: |
           VERSION=$(date +%Y.%m.%d.%H%M%S)
+          echo "version=v$VERSION" >> $GITHUB_OUTPUT
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git tag v$VERSION
@@ -30,9 +32,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Upload artifacts
-        if: startsWith(github.ref, 'refs/tags/')
+        if: github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v1
         with:
           files: dist/*.dmg
+          tag_name: ${{ steps.create_tag.outputs.version }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
