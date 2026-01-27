@@ -323,3 +323,196 @@ ipcMain.handle("get-local-storage", (event, key) => {
 ipcMain.on("set-local-storage", (event, key, value) => {
      store.set(key, value);
 });
+
+// Dowmload Window Code:
+
+const { getSystemInfo } = require('./system-detector');
+
+function createDownloadWindow() {
+    const systemInfo = getSystemInfo();
+
+    const downloadWindow = new BrowserWindow({
+        width: 600,
+        height: 500,
+        modal: true,
+        parent: mainWindow,
+        webPreferences: {
+            preload: path.join(__dirname, "preload.js"),
+            contextIsolation: true,
+            nodeIntegration: false,
+        },
+    });
+
+    const html = `
+        <!DOCTYPE html>
+        
+        <html>
+            <head>
+                <style>
+                    body {
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI';
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        height: 100vh;
+                        margin: 0;
+                        background: linear-gradient(135deg, #ececec, #f5f5f5);
+                    } 
+
+                    .container {
+                        background: white;
+                        padding: 40px;
+                        border-radius: 12px;
+                        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                        max-width: 500px;
+                    }
+                        
+                    h1 { color: #333; margin-top: 0; }
+
+                    .info { background: #f0f0f0; padding: 15px; border-radius: 8px; margin: 20px 0; }
+                    
+                    .option { margin: 20px 0; }
+                    .option input[type="radio"] { margin-right: 10px; }
+
+                    button {
+                        background: #667eea;
+                        color: white;
+                        border: none;
+                        padding: 12px 30px;
+                        border-radius: 6px;
+                        cursor: pointer;
+                        font-size: 16px;
+                        margin-top: 20px;
+                        width: 100%;
+                    }
+                    
+                    button:hover { background: #5568d3; }
+                </style>
+            </head>
+
+            <body>
+                <div class="container">
+                    <h1>Download Google Messages</h1>
+                    
+                    <div class="info">
+                        <strong>Detected System:</strong><br>
+                        Architecture: ${systemInfo.archLabel}<br>
+                        macOS: ${systemInfo.osVersion}
+                    </div>
+
+                    <h3>Select Version</h3>
+
+                    <div class="option">
+                        <input type="radio" name="arch" value="auto" checked id="auto">
+                        <label for="auto">Auto-Select (${systemInfo.archLabel})</label>
+                    </div>
+
+                    <div class="option">
+                        <input type="radio" name="arch" value="arm64" id="arm64">
+                        <label for="arm64">Force Apple Silicon</label>
+                    </div>
+
+                    <div class="option">
+                        <input type="radio" name="arch" value="x64" id="x64">
+                        <label for="x64">Force Intel</label>
+                    </div>
+
+                    <h3>macOS Version</h3>
+
+                    <div class="option">
+                        <input type="radio" name="osVersion" value"auto" checked id="osAuto">
+                        <label for="osAuto">Auto-Select (${systemInfo.osVersion})</label>
+                    </div>
+
+                    <div class="option">
+                        <input type="radio" name="osVersion" value"Tahoe" id="tahoe">
+                        <label for="tahoe">Tahoe 26.2</label>
+                    </div>
+
+                    <div class="option">
+                        <input type="radio" name="osVersion" value"Tahoe" id="tahoe">
+                        <label for="osAuto">Auto-Select</label>
+                    </div>
+
+                    <div class="option">
+                        <input type="radio" name="osVersion" value="Sequoia" id="sequoia">
+                        <label for="sequoia">Sequoia</label>
+                    </div>
+
+                    <div class="option">
+                        <input type="radio" name="osVersion" value="Sonoma" id="sonoma">
+                        <label for="sonoma">Sonoma</label>
+                    </div>
+
+                    <button onclick="downloadInstaller()">Download DMG</button>
+                </div>
+
+                <script>
+                    async function downloadInstaller() {
+                        const arch = document.querySelector('input[name="arch"]:checked').value;
+                        const osVersion = document.querySelector('input[name="osVersion"]:checked').value;
+
+                        window.electron.downloadDMG({
+                            architecture: arch,
+                            osVersion: osVersion
+                        })
+                    }
+                </script>
+            </body>
+        </html>
+    `;
+
+    downloadWindow.loadURL(`data:text/html;charset=utf-8, ${encodeURIComponent(html)}`);
+
+    return downloadWindow;
+}
+
+// IPC Handlers for Downloading DMG
+
+const axios = require("axios");
+const { app: electronApp } = require("electron");
+const path = require("path");
+const fs = require("fs");
+
+ipcMain.handle("open-download-window", async () => {
+    const { architecture, osVersion } = getSystemInfo();
+    const finalArch = architecture === "auto" ? process.arch : architecture;
+    const finalOS = osVersion === "auto" ? getSystemInfo().osVersion : osVersion;
+
+    const downloadURL = `https://your-releases-server.com/mac-google-messages-${finalArch}-${finalOS}.dmg`; // Build your DMG Download URL based on OS & Architecture
+    
+    const downloadsPath = electronApp.getPath("downloads");
+    const fileName = `mac-google-messages-${finalArch}-${finalOS}.dmg`;
+    const filePath = path.join(downloadsPath, fileName);
+
+    try {
+        const response = await axios.get(downloadURL, {
+            responseType: 'stream',
+
+            onDownloadProgress: (progressEvent) => {
+                const percentCompleted = Math.round(
+                    (progressEvent.loaded * 100) / progressEvent.total
+                );
+
+                event.sender.send('download-progress', percentCompleted);
+            }
+        });
+
+        const writer = fs.createWriteStream(filePath);
+        response.data.pipe(writer);
+
+        return new Promise((resolve, reject) => {
+            writer.on('finish', () => {
+                // Auto-mount DMG
+                require('child_process').exec(`open "${filePath}"`);
+                resolve({ success: true, path: filePath });
+            });
+
+            writer.on('error', reject);
+        });
+    } catch (error) {
+        console.error('Download failed:', error);
+        throw error;
+    }
+});
+

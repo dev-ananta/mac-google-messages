@@ -69,7 +69,7 @@ As far as right now I've not planned the installer function that would ask for d
   No.6 | Debug Code
   No.7 | MVP Released
   No.8 | Code **system-detector.js**
-  No.9 | Update **index.js** & **package.json** → Test
+  No.9 | Update **index.js**, **package.json**, & **preload.js** → Test
  No.10 | Request Feedback → Improve Project
  No.11 | Debug Code
  No.12 | MDP Released

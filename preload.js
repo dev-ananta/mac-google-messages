@@ -4,8 +4,15 @@ const {
 } = require("electron");
 
 contextBridge.exposeInMainWorld("electron", {
+    downloadDMG: (options) =>
+        ipcRenderer.invoke("download-dmg", options),
+
+    onDownloadProgress: (callback) =>
+        ipcRenderer.on('download-progress', (event, progress) => callback(progress)),
+
     getLocalStorage: (key) => 
         ipcRenderer.invoke("get-local-storage", key),
+    
     setLocalStorage: (key, value) => 
         ipcRenderer.send("set-local-storage", key, value),
 
