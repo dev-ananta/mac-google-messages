@@ -16,7 +16,7 @@ const Store = require("electron-store");
 
 const store = new Store();
 let tray, mainWindow;
-const iconPath = path.join(__dirname, "icons.icns");
+const iconPath = path.join(__dirname, "icon.icns");
 const appName = "Google Messages";
 
 // Functions
@@ -72,10 +72,12 @@ function createWindow() {
     });
 
     mainWindow.on("resize", () => {
-        const [width, height] = mainWindow.getSize();
+        const { x, y, width, height } = mainWindow.getBounds();
 
         store.set("windowX", x);
         store.set("windowY", y);
+        store.set("windowWidth", width);
+        store.set("windowHeight", height);
     });
 
     setupNotifications();
