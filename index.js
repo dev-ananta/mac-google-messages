@@ -12,7 +12,7 @@ const {
 } = require("electron");
 
 const path = require("path");
-const Store = require("eklectron-store");
+const Store = require("electron-store");
 
 const store = new Store();
 let tray, mainWindow;

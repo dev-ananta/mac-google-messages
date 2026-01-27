@@ -67,11 +67,10 @@ As far as right now I've not planned the installer function that would ask for d
  No.2 | Code **index.js**
  No.3 | Code **preload.js**
  No.4 | Code **package.json** & **build.yml** → Test
- No.5 | Debug Code
- No.6 | Request Feedback
- No.7 | Improve Project
- No.8 | Minor Tweaks
- No.9 | MVP Released
+ No.5 | Request Feedback → Improve Project
+ No.6 | Debug Code
+ No.7 | Request Feedback → Minor Tweaks
+ No.8 | MVP Released
 
 ```
 
