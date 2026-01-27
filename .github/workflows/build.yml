@@ -7,6 +7,9 @@ jobs:
     runs-on: macos-latest
     permissions:
       contents: write
+    strategy:
+      matrix:
+        arch: [arm64, x64]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -14,9 +17,33 @@ jobs:
           node-version: '18'
       
       - run: npm install
-      - run: npm run dist
+      - run: npm run dist -- --mac --${{ matrix.arch }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Get macOS version
+        id: get_version
+        run: |
+          DARWIN_VERSION=$(uname -r | cut -d. -f1)
+          case $DARWIN_VERSION in
+            24) OS_NAME="Sequoia" ;;
+            23) OS_NAME="Sonoma" ;;
+            22) OS_NAME="Ventura" ;;
+            21) OS_NAME="Monterey" ;;
+            20) OS_NAME="Tahoe" ;;
+            *) OS_NAME="macOS" ;;
+          esac
+          echo "os_name=$OS_NAME" >> $GITHUB_OUTPUT
+      
+      - name: Rename DMG with architecture and OS
+        run: |
+          ARCH="${{ matrix.arch }}"
+          OS_NAME="${{ steps.get_version.outputs.os_name }}"
+          for dmg in dist/*.dmg; do
+            if [ -f "$dmg" ]; then
+              mv "$dmg" "dist/google-messages-${ARCH}-${OS_NAME}.dmg"
+            fi
+          done
       
       - name: Create tag and release
         id: create_tag

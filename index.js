@@ -245,6 +245,11 @@ function createMenu() {
 
             submenu: [
                 {
+                    label: "Download Google Messages Installer",
+                    click: () => createDownloadWindow(),
+                },
+                { type: "separator" },
+                {
                     label: "Learn More",
 
                     click: () =>
@@ -420,18 +425,13 @@ function createDownloadWindow() {
                     <h3>macOS Version</h3>
 
                     <div class="option">
-                        <input type="radio" name="osVersion" value"auto" checked id="osAuto">
+                        <input type="radio" name="osVersion" value="auto" checked id="osAuto">
                         <label for="osAuto">Auto-Select (${systemInfo.osVersion})</label>
                     </div>
 
                     <div class="option">
-                        <input type="radio" name="osVersion" value"Tahoe" id="tahoe">
+                        <input type="radio" name="osVersion" value="Tahoe" id="tahoe">
                         <label for="tahoe">Tahoe 26.2</label>
-                    </div>
-
-                    <div class="option">
-                        <input type="radio" name="osVersion" value"Tahoe" id="tahoe">
-                        <label for="osAuto">Auto-Select</label>
                     </div>
 
                     <div class="option">
@@ -442,6 +442,11 @@ function createDownloadWindow() {
                     <div class="option">
                         <input type="radio" name="osVersion" value="Sonoma" id="sonoma">
                         <label for="sonoma">Sonoma</label>
+                    </div>
+
+                    <div class="option">
+                        <input type="radio" name="osVersion" value="Ventura" id="ventura">
+                        <label for="ventura">Ventura</label>
                     </div>
 
                     <button onclick="downloadInstaller()">Download DMG</button>
@@ -474,15 +479,21 @@ const { app: electronApp } = require("electron");
 const path = require("path");
 const fs = require("fs");
 
-ipcMain.handle("open-download-window", async () => {
-    const { architecture, osVersion } = getSystemInfo();
-    const finalArch = architecture === "auto" ? process.arch : architecture;
-    const finalOS = osVersion === "auto" ? getSystemInfo().osVersion : osVersion;
+ipcMain.handle("download-dmg", async (event, options) => {
+    const { architecture, osVersion } = options;
+    const systemInfo = getSystemInfo();
+    
+    // Use user selection or default to system info
+    const finalArch = architecture === "auto" ? systemInfo.architecture : architecture;
+    const finalOS = osVersion === "auto" ? systemInfo.osVersion : osVersion;
 
-    const downloadURL = `https://your-releases-server.com/mac-google-messages-${finalArch}-${finalOS}.dmg`; // Build your DMG Download URL based on OS & Architecture
+    // Build download URL from GitHub releases
+    const repoOwner = "aparikh1"; // Update with your GitHub username
+    const repoName = "mac-google-messages";
+    const downloadURL = `https://github.com/${repoOwner}/${repoName}/releases/download/latest/google-messages-${finalArch}-${finalOS}.dmg`;
     
     const downloadsPath = electronApp.getPath("downloads");
-    const fileName = `mac-google-messages-${finalArch}-${finalOS}.dmg`;
+    const fileName = `google-messages-${finalArch}-${finalOS}.dmg`;
     const filePath = path.join(downloadsPath, fileName);
 
     try {
@@ -503,7 +514,7 @@ ipcMain.handle("open-download-window", async () => {
 
         return new Promise((resolve, reject) => {
             writer.on('finish', () => {
-                // Auto-mount DMG
+                // Auto-mount DMG to show installer
                 require('child_process').exec(`open "${filePath}"`);
                 resolve({ success: true, path: filePath });
             });
