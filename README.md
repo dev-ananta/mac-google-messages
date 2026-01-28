@@ -56,7 +56,7 @@ This creates a distrubutable in the `dist` folder.
 
 ### Project Compatibality
 
-As far as right now I've not planned the installer function that would ask for details such as Intel or Silicon & MacOS Model to ensure installing compatible app. Only a version for the MacBook Air, Silicon M4 Chip, with Tahoe 26.2 is planned.
+Compatible with both Intel and Silicon Macintosh Devices via x64 for Intel Macs and arm64 for Silicon Macs.
 
 ### Project Roadmap
 
